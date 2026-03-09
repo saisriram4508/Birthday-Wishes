@@ -43,20 +43,76 @@ body{background:#0d0008;color:#fff;font-family:'Poppins',sans-serif;overflow-x:h
 .heart-float{position:absolute;pointer-events:none;z-index:3;opacity:0;animation:hf linear infinite;}
 @keyframes hf{0%{opacity:0;transform:translateY(0) scale(.5);}15%{opacity:1;}85%{opacity:.7;}100%{opacity:0;transform:translateY(-90px) scale(1);}}
 
-/* ── GALLERY ── */
-#gallery{min-height:100svh;padding:4rem 1rem 4.5rem;background:linear-gradient(180deg,#0d0015,#200030 50%,#0d0020);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;}
-.gal-stack{position:relative;width:min(286px,80vw);height:min(346px,94vw);margin:0 auto;touch-action:pan-y;user-select:none;}
-.g-card{position:absolute;inset:0;border-radius:18px;overflow:hidden;border:2px solid rgba(255,182,193,.28);box-shadow:0 10px 34px rgba(0,0,0,.5);cursor:grab;transition:transform .42s cubic-bezier(.34,1.4,.64,1),opacity .36s,box-shadow .28s;will-change:transform,opacity;}
-.g-card:active{cursor:grabbing;}
-.g-card.on{box-shadow:0 0 26px rgba(255,105,180,.42),0 14px 42px rgba(0,0,0,.52);}
-.g-card .ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;font-size:.8rem;color:rgba(255,255,255,.6);text-align:center;padding:1rem;}
-.g-card img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;}
-.gal-ctrl{display:flex;align-items:center;gap:.9rem;margin-top:1.5rem;}
-.g-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,182,193,.13);border:1.5px solid rgba(255,182,193,.36);color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .14s;-webkit-tap-highlight-color:transparent;}
-.g-btn:active{background:rgba(255,105,180,.3);transform:scale(.87);}
-.g-dots{display:flex;gap:.42rem;align-items:center;}
-.g-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,182,193,.27);cursor:pointer;transition:all .28s;}
-.g-dot.on{background:var(--rose);transform:scale(1.3);}
+/* ── GALLERY — alternating scroll ── */
+#gallery{
+  padding:5rem 0 4rem;
+  background:linear-gradient(180deg,#0d0015,#200030 50%,#0d0020);
+  position:relative;overflow:hidden;
+}
+.gal-header{font-family:'Dancing Script',cursive;font-size:clamp(1.7rem,6vw,3rem);text-align:center;background:linear-gradient(135deg,var(--pink),var(--pur),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:3.5rem;opacity:0;transform:translateY(24px);}
+
+/* each row */
+.mem-row{
+  display:flex;align-items:center;gap:0;
+  width:100%;max-width:860px;margin:0 auto 0;
+  padding:2.2rem 1.2rem;
+  opacity:0;
+  will-change:transform,opacity;
+}
+.mem-row:last-child{margin-bottom:0;}
+/* odd = photo left, text right */
+.mem-row.left{flex-direction:row;}
+/* even = text left, photo right */
+.mem-row.right{flex-direction:row-reverse;}
+
+/* photo side */
+.mem-photo{
+  flex:0 0 auto;
+  width:min(155px,42vw);height:min(195px,53vw);
+  border-radius:18px;overflow:hidden;
+  border:2.5px solid rgba(255,182,193,.35);
+  box-shadow:0 12px 40px rgba(0,0,0,.55),0 0 24px rgba(255,105,180,.2);
+  position:relative;
+  flex-shrink:0;
+}
+.mem-photo img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;}
+/* shine overlay */
+.mem-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.08) 0%,transparent 60%);pointer-events:none;}
+
+/* text side */
+.mem-text{
+  flex:1;
+  padding:0 1.1rem;
+  display:flex;flex-direction:column;gap:.45rem;
+}
+.mem-row.left .mem-text{text-align:left;}
+.mem-row.right .mem-text{text-align:right;}
+
+.mem-tag{
+  display:inline-block;
+  font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--rose);
+  font-weight:600;
+  margin-bottom:.1rem;
+}
+.mem-quote{
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(1.05rem,3.5vw,1.35rem);
+  color:#fff;
+  line-height:1.55;
+}
+.mem-desc{
+  font-size:clamp(.72rem,2.2vw,.84rem);
+  color:rgba(255,210,230,.65);
+  line-height:1.7;
+  font-weight:300;
+}
+/* connector line between rows */
+.mem-line{
+  width:1px;height:40px;
+  background:linear-gradient(180deg,transparent,rgba(255,105,180,.4),transparent);
+  margin:0 auto;
+}
 
 /* ── BALLOONS ── */
 #balloons{min-height:100svh;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#0d0020,#1a0035);position:relative;overflow:hidden;}
@@ -145,16 +201,58 @@ body{background:#0d0008;color:#fff;font-family:'Poppins',sans-serif;overflow-x:h
   </div>
 </section>
 
-<!-- GALLERY -->
+<!-- GALLERY — alternating scroll -->
 <section id="gallery">
-  <h2 class="section-label" id="gal-title">📸 Beautiful Memories</h2>
-  <div class="gal-stack" id="gal-stack"></div>
-  <div class="gal-ctrl">
-    <button class="g-btn" id="gal-prev">◀</button>
-    <div class="g-dots" id="gal-dots"></div>
-    <button class="g-btn" id="gal-next">▶</button>
+  <h2 class="gal-header" id="gal-title">📸 Beautiful Memories</h2>
+
+  <div class="mem-row left"  id="mem-0">
+    <div class="mem-photo"><img src="1.jpeg" alt="Memory 1" id="mimg-0"/></div>
+    <div class="mem-text">
+      <span class="mem-tag">✨ Elegance</span>
+      <p class="mem-quote">"Grace in every step, beauty in every glance."</p>
+      <p class="mem-desc">The way you carry yourself in a saree is nothing short of breathtaking — pure elegance wrapped in silver.</p>
+    </div>
   </div>
-  <p style="margin-top:1rem;font-size:.6rem;color:rgba(255,200,220,.22);text-align:center;max-width:230px;line-height:1.6;">📷 Swipe or tap · Add photos via the PHOTOS array</p>
+  <div class="mem-line"></div>
+
+  <div class="mem-row right" id="mem-1">
+    <div class="mem-photo"><img src="2.jpeg" alt="Memory 2" id="mimg-1"/></div>
+    <div class="mem-text">
+      <span class="mem-tag">🌊 Free Spirit</span>
+      <p class="mem-quote">"As calm and beautiful as the river beside you."</p>
+      <p class="mem-desc">Your smile by the water says it all — serene, radiant, and full of life. Nature agrees you're stunning.</p>
+    </div>
+  </div>
+  <div class="mem-line"></div>
+
+  <div class="mem-row left"  id="mem-2">
+    <div class="mem-photo"><img src="3.jpeg" alt="Memory 3" id="mimg-2"/></div>
+    <div class="mem-text">
+      <span class="mem-tag">🌹 Warmth</span>
+      <p class="mem-quote">"You bloom just like the roses you hold."</p>
+      <p class="mem-desc">Kind-hearted, gentle, and full of warmth — you radiate the same softness as the flowers in your hands.</p>
+    </div>
+  </div>
+  <div class="mem-line"></div>
+
+  <div class="mem-row right" id="mem-3">
+    <div class="mem-photo"><img src="4.jpeg" alt="Memory 4" id="mimg-3"/></div>
+    <div class="mem-text">
+      <span class="mem-tag">🌙 Dreamer</span>
+      <p class="mem-quote">"Even the night lights up when you smile."</p>
+      <p class="mem-desc">There's a quiet magic about you — thoughtful, deep, and glowing even under the stars.</p>
+    </div>
+  </div>
+  <div class="mem-line"></div>
+
+  <div class="mem-row left"  id="mem-4">
+    <div class="mem-photo"><img src="5.jpeg" alt="Memory 5" id="mimg-4"/></div>
+    <div class="mem-text">
+      <span class="mem-tag">🎨 Bright Soul</span>
+      <p class="mem-quote">"You make every background more beautiful."</p>
+      <p class="mem-desc">Colourful, vibrant, and full of joy — just like the art behind you, you make the world a more beautiful place.</p>
+    </div>
+  </div>
 </section>
 
 <!-- BALLOONS -->
@@ -212,11 +310,11 @@ body{background:#0d0008;color:#fff;font-family:'Poppins',sans-serif;overflow-x:h
 'use strict';
 /* ══ PHOTOS — replace src:null with your image URLs ══ */
 const PHOTOS=[
-  {src:"1.jpeg", label:"In a Saree 💕"},
-  {src:"2.jpeg", label:"By the River 🌸"},
-  {src:"3.jpeg", label:"With Roses ✨"},
-  {src:"4.jpeg", label:"Garden Moments 🎀"},
-  {src:"5.jpeg", label:"At the Gallery 💖"},
+  {src:"1.jpeg",label:"In a Saree 💕"},
+  {src:"2.jpeg",label:"By the River 🌸"},
+  {src:"3.jpeg",label:"With Roses ✨"},
+  {src:"4.jpeg",label:"Garden Moments 🎀"},
+  {src:"5.jpeg",label:"At the Gallery 💖"}
 ];
 
 gsap.registerPlugin(ScrollTrigger);
@@ -270,36 +368,39 @@ ScrollTrigger.create({trigger:'#message',start:'top 73%',onEnter:()=>gsap.to('#m
 })();
 
 /* ════════════════════════════════
-   GALLERY
+   GALLERY — alternating scroll reveal
 ════════════════════════════════ */
 (function(){
-  const el=document.getElementById('gal-stack'),dots=document.getElementById('gal-dots');
-  const N=PHOTOS.length;let cur=0;const cards=[];
+  // Inject photos from PHOTOS array into img tags
   PHOTOS.forEach((p,i)=>{
-    const c=document.createElement('div');c.className='g-card';
-    if(p.src){const img=document.createElement('img');img.src=p.src;img.alt=p.label;img.loading='lazy';c.appendChild(img);}
-    else{const ph=document.createElement('div');ph.className='ph';ph.style.background=`linear-gradient(145deg,hsl(${300+i*28},55%,17%),hsl(${330+i*28},44%,10%))`;ph.innerHTML=`<span style="font-size:2.4rem;opacity:.48">📷</span><span style="font-weight:600;font-size:.86rem">${p.label}</span><span style="font-size:.58rem;opacity:.36">Add your photo here</span>`;c.appendChild(ph);}
-    el.appendChild(c);cards.push(c);
-    const d=document.createElement('div');d.className='g-dot'+(i===0?' on':'');d.addEventListener('click',()=>go(i));dots.appendChild(d);
+    const img=document.getElementById('mimg-'+i);
+    if(img&&p.src) img.src=p.src;
   });
-  function go(idx){
-    cur=((idx%N)+N)%N;
-    cards.forEach((c,i)=>{const o=((i-cur+N)%N);
-      if(o===0){c.style.cssText='transform:translateX(0) scale(1) rotate(0deg);opacity:1;z-index:10;';c.classList.add('on');}
-      else if(o===1){c.style.cssText='transform:translateX(11px) scale(.94) rotate(2deg);opacity:.66;z-index:9;';c.classList.remove('on');}
-      else if(o===2){c.style.cssText='transform:translateX(20px) scale(.88) rotate(4deg);opacity:.36;z-index:8;';c.classList.remove('on');}
-      else{c.style.cssText='transform:translateX(25px) scale(.82) rotate(5deg);opacity:0;z-index:7;';c.classList.remove('on');}
+
+  // Animate title
+  ScrollTrigger.create({
+    trigger:'#gallery',start:'top 75%',
+    onEnter:()=>gsap.to('#gal-title',{opacity:1,y:0,duration:.9,ease:'power3.out'})
+  });
+
+  // Each row slides in from its side
+  document.querySelectorAll('.mem-row').forEach((row,i)=>{
+    const isLeft=row.classList.contains('left');
+    // start offscreen
+    gsap.set(row,{opacity:0,x:isLeft?-70:70});
+    ScrollTrigger.create({
+      trigger:row,
+      start:'top 82%',
+      onEnter:()=>{
+        gsap.to(row,{
+          opacity:1,x:0,
+          duration:.9,
+          delay:0.05,
+          ease:'power3.out'
+        });
+      }
     });
-    dots.querySelectorAll('.g-dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
-  }
-  go(0);
-  document.getElementById('gal-prev').addEventListener('click',()=>go(cur-1));
-  document.getElementById('gal-next').addEventListener('click',()=>go(cur+1));
-  let tx=0;el.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
-  el.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>36)go(d<0?cur+1:cur-1);},{passive:true});
-  let mx=0,drag=false;el.addEventListener('mousedown',e=>{mx=e.clientX;drag=true;});window.addEventListener('mouseup',e=>{if(!drag)return;drag=false;const d=e.clientX-mx;if(Math.abs(d)>36)go(d<0?cur+1:cur-1);});
-  let auto=setInterval(()=>go(cur+1),3600);el.addEventListener('touchstart',()=>{clearInterval(auto);},{passive:true});
-  ScrollTrigger.create({trigger:'#gallery',start:'top 73%',onEnter:()=>gsap.to('#gal-title',{opacity:1,y:0,duration:.9,ease:'power3.out'})});
+  });
 })();
 
 /* ════════════════════════════════
